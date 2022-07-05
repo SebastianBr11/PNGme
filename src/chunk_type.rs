@@ -2,7 +2,7 @@ use crate::Result;
 use std::{fmt::Display, str::FromStr};
 
 #[derive(Debug, PartialEq, Eq)]
-struct ChunkType {
+pub struct ChunkType {
     bytes: [u8; 4],
 }
 
