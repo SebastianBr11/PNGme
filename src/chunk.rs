@@ -5,7 +5,6 @@ use crc::CRC_32_ISO_HDLC;
 use crate::chunk_type::ChunkType;
 use crate::Result;
 
-#[derive(Debug)]
 pub struct Chunk {
     length: u32,
     chunk_type: ChunkType,
@@ -86,7 +85,15 @@ impl TryFrom<&[u8]> for Chunk {
 
 impl Display for Chunk {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
+        write!(
+            f,
+            "Chunk Type: {:4}, CRC({:10}) {:3} bytes long, Data as string: {}",
+            self.chunk_type(),
+            self.crc,
+            self.length,
+            self.data_as_string()
+                .unwrap_or("[No UTF-8 Representation]".into())
+        )
     }
 }
 

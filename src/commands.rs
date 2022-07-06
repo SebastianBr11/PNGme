@@ -50,10 +50,7 @@ pub fn print_chunks(args: &PrintArgs) -> Result<()> {
     let file = &fs::read(&args.file_path)?;
     let png = Png::try_from(&file[..])?;
 
-    png.chunks()
-        .iter()
-        .enumerate()
-        .for_each(|(i, c)| println!("{i}: {c}"));
+    println!("{png}");
 
     Ok(())
 }

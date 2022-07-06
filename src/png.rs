@@ -5,7 +5,6 @@ use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
 use crate::Result;
 
-#[derive(Debug)]
 pub struct Png {
     chunks: Vec<Chunk>,
 }
@@ -98,7 +97,10 @@ impl TryFrom<&[u8]> for Png {
 
 impl Display for Png {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
+        for (i, chunk) in self.chunks().iter().enumerate() {
+            write!(f, "{i}: {chunk}\n")?;
+        }
+        Ok(())
     }
 }
 
