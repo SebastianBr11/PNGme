@@ -6,7 +6,7 @@ use crate::chunk_type::ChunkType;
 use crate::Result;
 
 #[derive(Debug)]
-struct Png {
+pub struct Png {
     chunks: Vec<Chunk>,
 }
 
