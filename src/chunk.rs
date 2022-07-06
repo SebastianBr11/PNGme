@@ -66,9 +66,7 @@ impl TryFrom<&[u8]> for Chunk {
     type Error = crate::Error;
 
     fn try_from(value: &[u8]) -> std::result::Result<Self, Self::Error> {
-        let length = value[..4]
-            .into_iter()
-            .fold(0 as u32, |acc, n| acc + (*n as u32));
+        let length = u32::from_be_bytes(value[..4].try_into()?);
         let type_code: [u8; 4] = value[4..8].try_into()?;
         let chunk_type = ChunkType::try_from(type_code)?;
 
@@ -77,7 +75,10 @@ impl TryFrom<&[u8]> for Chunk {
         let chunk = Chunk::new(chunk_type, Vec::from(&value[8..(length as usize + 8)]));
 
         if chunk.crc() != crc {
-            return Err(WrongCRC.into());
+            return Err(Box::new(WrongCRC {
+                correct: crc,
+                wrong: chunk.crc(),
+            }));
         }
         Ok(chunk)
     }
@@ -90,11 +91,18 @@ impl Display for Chunk {
 }
 
 #[derive(Debug, Clone)]
-struct WrongCRC;
+struct WrongCRC {
+    wrong: u32,
+    correct: u32,
+}
 
 impl Display for WrongCRC {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "CRC is not correct!")
+        write!(
+            f,
+            "CRC is not correct! Correct: {}, Wrong: {}",
+            self.correct, self.wrong
+        )
     }
 }
 
