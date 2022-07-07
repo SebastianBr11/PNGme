@@ -3,7 +3,7 @@ use crate::{
     chunk::Chunk,
     chunk_type::ChunkType,
     png::Png,
-    Result,
+    web, Result,
 };
 use std::{
     fmt::Display,
@@ -11,21 +11,52 @@ use std::{
     str::FromStr,
 };
 
-pub fn encode_file(args: &EncodeArgs) -> Result<()> {
-    let file = &fs::read(&args.file_path)?;
-    let mut png = Png::try_from(&file[..])?;
-    let data: Vec<_> = args.message[..].as_bytes().iter().copied().collect();
+pub struct Encode<'a> {
+    args: &'a EncodeArgs,
+}
 
-    png.append_chunk(Chunk::new(ChunkType::from_str(&args.chunk_type)?, data));
-
-    if let Some(file_path) = &args.output_file {
-        let _ = &fs::write(file_path, png.as_bytes())?;
-    } else {
-        let _ = &fs::write(&args.file_path, png.as_bytes())?;
+impl<'a> Encode<'a> {
+    pub fn new(args: &EncodeArgs) -> Encode {
+        Encode { args }
     }
 
-    Ok(())
+    pub fn encode_web_file(&self) -> Result<()> {
+        let file = web::get_file_from(&self.args.file_path)?;
+
+        let png = self.encode_file(&file)?;
+        if let Some(file_path) = &self.args.output_file {
+            let _ = &fs::write(file_path, png.as_bytes())?;
+        } else {
+            println!("Missing output file path!");
+        }
+        Ok(())
+    }
+
+    pub fn encode_local_file(&self) -> Result<()> {
+        let file = &fs::read(&self.args.file_path)?;
+        let png = self.encode_file(file)?;
+
+        if let Some(file_path) = &self.args.output_file {
+            let _ = &fs::write(file_path, png.as_bytes())?;
+        } else {
+            let _ = &fs::write(&self.args.file_path, png.as_bytes())?;
+        }
+        Ok(())
+    }
+
+    fn encode_file(&self, file_data: &[u8]) -> Result<Png> {
+        let mut png = Png::try_from(&file_data[..])?;
+        let data: Vec<_> = self.args.message[..].as_bytes().iter().copied().collect();
+
+        png.append_chunk(Chunk::new(
+            ChunkType::from_str(&self.args.chunk_type)?,
+            data,
+        ));
+
+        Ok(png)
+    }
 }
+
 pub fn decode_file(args: &DecodeArgs) -> Result<String> {
     let file = &fs::read(&args.file_path)?;
     let png = Png::try_from(&file[..])?;

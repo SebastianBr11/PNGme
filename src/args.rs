@@ -3,6 +3,8 @@ use clap::{Args, Parser, Subcommand};
 #[derive(Debug, Parser)]
 /// A command line program that lets you hide secret messages in PNG files.
 pub struct PngMeArgs {
+    #[clap(short, long, global(true))]
+    pub web: bool,
     #[clap(subcommand)]
     command: Command,
 }
@@ -33,7 +35,10 @@ pub struct EncodeArgs {
     pub file_path: String,
     pub chunk_type: String,
     pub message: String,
+    #[clap(required_if_eq("web", "true"))]
     pub output_file: Option<String>,
+    #[clap(from_global)]
+    pub web: bool,
 }
 
 #[derive(Debug, Args)]
