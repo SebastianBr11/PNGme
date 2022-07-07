@@ -2,9 +2,9 @@ use args::Command;
 use args::PngMeArgs;
 use clap::Parser;
 use commands::decode_file;
+use commands::encode::Encode;
 use commands::print_chunks;
 use commands::remove_encoding;
-use commands::Encode;
 
 mod args;
 mod chunk;
