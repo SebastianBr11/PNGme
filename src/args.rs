@@ -1,6 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
+/// A command line program that lets you hide secret messages in PNG files.
 pub struct PngMeArgs {
     #[clap(subcommand)]
     command: Command,
@@ -14,16 +15,16 @@ impl PngMeArgs {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Encode a message into a png file
+    /// Encode a message into a PNG file
     Encode(EncodeArgs),
 
-    /// Decode a message from a png file
+    /// Decode a message stored in a PNG file
     Decode(DecodeArgs),
 
     /// Remove message from a png file
     Remove(RemoveArgs),
 
-    /// Print message of a png file
+    /// Print a list of PNG chunks
     Print(PrintArgs),
 }
 
