@@ -1,22 +1,13 @@
 use std::fmt::Display;
 pub use std::{fs, str::FromStr};
 
-use crate::args::{PrintArgs, RemoveArgs};
+use crate::args::PrintArgs;
 pub use crate::{chunk::Chunk, chunk_type::ChunkType, png::Png, web, Result};
 
 pub mod decode;
 pub mod encode;
+pub mod remove;
 
-pub fn remove_encoding(args: &RemoveArgs) -> Result<String> {
-    let file = &fs::read(&args.file_path)?;
-    let mut png = Png::try_from(&file[..])?;
-
-    let removed_chunk = png.remove_chunk(&args.chunk_type)?;
-
-    let _ = &fs::write(&args.file_path, png.as_bytes())?;
-
-    Ok(removed_chunk.data_as_string()?)
-}
 pub fn print_chunks(args: &PrintArgs) -> Result<()> {
     let file = &fs::read(&args.file_path)?;
     let png = Png::try_from(&file[..])?;

@@ -4,7 +4,7 @@ use clap::Parser;
 use commands::decode::Decode;
 use commands::encode::Encode;
 use commands::print_chunks;
-use commands::remove_encoding;
+use commands::remove::Remove;
 
 mod args;
 mod chunk;
@@ -38,12 +38,19 @@ pub fn run() -> Result<()> {
                 message = decode.decode_local_file()?;
             }
 
-
             println!("Decoded message found:");
             println!("'{message}'");
         }
         Command::Remove(remove_args) => {
-            let removed_message = remove_encoding(&remove_args)?;
+            let remove = Remove::new(&remove_args);
+            let removed_message;
+
+            if remove_args.web {
+                removed_message = remove.remove_web_encoding()?;
+            } else {
+                removed_message = remove.remove_local_encoding()?;
+            }
+
             println!("Removed message '{removed_message}'");
         }
         Command::Print(print_args) => print_chunks(&print_args)?,

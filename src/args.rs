@@ -53,6 +53,10 @@ pub struct DecodeArgs {
 pub struct RemoveArgs {
     pub file_path: String,
     pub chunk_type: String,
+    #[clap(required_if_eq("web", "true"))]
+    pub output_file: Option<String>,
+    #[clap(from_global)]
+    pub web: bool,
 }
 
 #[derive(Debug, Args)]
