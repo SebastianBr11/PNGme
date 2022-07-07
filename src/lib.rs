@@ -1,7 +1,7 @@
 use args::Command;
 use args::PngMeArgs;
 use clap::Parser;
-use commands::decode_file;
+use commands::decode::Decode;
 use commands::encode::Encode;
 use commands::print_chunks;
 use commands::remove_encoding;
@@ -11,7 +11,7 @@ mod chunk;
 mod chunk_type;
 mod commands;
 mod png;
-mod web;
+pub mod web;
 
 pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
@@ -29,7 +29,16 @@ pub fn run() -> Result<()> {
             }
         }
         Command::Decode(decode_args) => {
-            let message = decode_file(&decode_args)?;
+            let decode = Decode::new(&decode_args);
+            let message: String;
+
+            if decode_args.web {
+                message = decode.decode_web_file()?;
+            } else {
+                message = decode.decode_local_file()?;
+            }
+
+
             println!("Decoded message found:");
             println!("'{message}'");
         }

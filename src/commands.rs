@@ -1,30 +1,12 @@
-use crate::{
-    args::{DecodeArgs, EncodeArgs, PrintArgs, RemoveArgs},
-    chunk::Chunk,
-    chunk_type::ChunkType,
-    png::Png,
-    web, Result,
-};
-use std::{
-    fmt::Display,
-    fs::{self},
-    str::FromStr,
-};
+use std::fmt::Display;
+pub use std::{fs, str::FromStr};
 
+use crate::args::{PrintArgs, RemoveArgs};
+pub use crate::{chunk::Chunk, chunk_type::ChunkType, png::Png, web, Result};
+
+pub mod decode;
 pub mod encode;
 
-
-
-pub fn decode_file(args: &DecodeArgs) -> Result<String> {
-    let file = &fs::read(&args.file_path)?;
-    let png = Png::try_from(&file[..])?;
-
-    let found_chunk = png
-        .chunk_by_type(&args.chunk_type)
-        .ok_or(NoChunkFound(String::from(&args.chunk_type)))?;
-
-    Ok(found_chunk.data_as_string()?)
-}
 pub fn remove_encoding(args: &RemoveArgs) -> Result<String> {
     let file = &fs::read(&args.file_path)?;
     let mut png = Png::try_from(&file[..])?;

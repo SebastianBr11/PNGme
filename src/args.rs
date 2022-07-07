@@ -45,6 +45,8 @@ pub struct EncodeArgs {
 pub struct DecodeArgs {
     pub file_path: String,
     pub chunk_type: String,
+    #[clap(from_global)]
+    pub web: bool,
 }
 
 #[derive(Debug, Args)]

@@ -1,6 +1,5 @@
-use std::{fs, str::FromStr};
-
-use crate::{args::EncodeArgs, chunk::Chunk, chunk_type::ChunkType, png::Png, web, Result};
+use super::*;
+use crate::args::EncodeArgs;
 
 pub struct Encode<'a> {
     args: &'a EncodeArgs,
