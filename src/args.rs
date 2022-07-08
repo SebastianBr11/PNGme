@@ -86,4 +86,7 @@ pub struct RemoveArgs {
 pub struct PrintArgs {
     /// Path to the resource
     pub file_path: String,
+
+    #[clap(from_global)]
+    pub web: bool,
 }

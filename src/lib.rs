@@ -3,7 +3,7 @@ use args::PngMeArgs;
 use clap::Parser;
 use commands::decode::Decode;
 use commands::encode::Encode;
-use commands::print_chunks;
+use commands::print::Print;
 use commands::remove::Remove;
 
 mod args;
@@ -53,7 +53,15 @@ pub fn run() -> Result<()> {
 
             println!("Removed message '{removed_message}'");
         }
-        Command::Print(print_args) => print_chunks(&print_args)?,
+        Command::Print(print_args) => {
+            let print = Print::new(&print_args);
+
+            if print_args.web {
+                print.print_web_chunks()?;
+            } else {
+                print.print_local_chunks()?;
+            }
+        }
     };
 
     Ok(())
