@@ -10,12 +10,20 @@ impl<'a> Print<'a> {
         Print { args }
     }
 
-    pub fn print_web_chunks(&self) -> Result<()> {
+    pub fn print(&self) -> Result<()> {
+        if self.args.web {
+            self.print_web_chunks()
+        } else {
+            self.print_local_chunks()
+        }
+    }
+
+    fn print_web_chunks(&self) -> Result<()> {
         let file = web::get_file_from(&self.args.file_path)?;
         self.print_chunks(&file)
     }
 
-    pub fn print_local_chunks(&self) -> Result<()> {
+    fn print_local_chunks(&self) -> Result<()> {
         let file = &fs::read(&self.args.file_path)?;
         self.print_chunks(file)
     }

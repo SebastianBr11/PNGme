@@ -10,7 +10,15 @@ impl<'a> Encode<'a> {
         Encode { args }
     }
 
-    pub fn encode_web_file(&self) -> Result<()> {
+    pub fn encode(&self) -> Result<()> {
+        if self.args.web {
+            self.encode_web_file()
+        } else {
+            self.encode_local_file()
+        }
+    }
+
+    fn encode_web_file(&self) -> Result<()> {
         let file = web::get_file_from(&self.args.file_path)?;
 
         let png = self.encode_file(&file)?;
@@ -22,7 +30,7 @@ impl<'a> Encode<'a> {
         Ok(())
     }
 
-    pub fn encode_local_file(&self) -> Result<()> {
+    fn encode_local_file(&self) -> Result<()> {
         let file = &fs::read(&self.args.file_path)?;
         let png = self.encode_file(file)?;
 

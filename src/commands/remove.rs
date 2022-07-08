@@ -10,7 +10,15 @@ impl<'a> Remove<'a> {
         Remove { args }
     }
 
-    pub fn remove_web_encoding(&self) -> Result<String> {
+    pub fn remove(&self) -> Result<String> {
+        if self.args.web {
+            self.remove_web_encoding()
+        } else {
+            self.remove_local_encoding()
+        }
+    }
+
+    fn remove_web_encoding(&self) -> Result<String> {
         let file = web::get_file_from(&self.args.file_path)?;
 
         let (png, removed_message) = self.remove_encoding(&file)?;
@@ -22,7 +30,7 @@ impl<'a> Remove<'a> {
         Ok(removed_message)
     }
 
-    pub fn remove_local_encoding(&self) -> Result<String> {
+    fn remove_local_encoding(&self) -> Result<String> {
         let file = &fs::read(&self.args.file_path)?;
         let (png, removed_message) = self.remove_encoding(file)?;
 

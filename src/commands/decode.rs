@@ -10,12 +10,20 @@ impl<'a> Decode<'a> {
         Decode { args }
     }
 
-    pub fn decode_web_file(&self) -> Result<String> {
+    pub fn decode(&self) -> Result<String> {
+        if self.args.web {
+            self.decode_web_file()
+        } else {
+            self.decode_local_file()
+        }
+    }
+
+    fn decode_web_file(&self) -> Result<String> {
         let file = web::get_file_from(&self.args.file_path)?;
         self.decode_file(&file)
     }
 
-    pub fn decode_local_file(&self) -> Result<String> {
+    fn decode_local_file(&self) -> Result<String> {
         let file = &fs::read(&self.args.file_path)?;
         self.decode_file(file)
     }
